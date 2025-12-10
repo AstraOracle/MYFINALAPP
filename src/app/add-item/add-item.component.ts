@@ -17,7 +17,9 @@ import { IonHeader, IonLabel, IonToolbar, IonTitle, IonContent, IonItem, IonInpu
   imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonItem, IonLabel, IonInput, IonButton, IonButtons, IonBackButton, IonIcon, FormsModule, ReactiveFormsModule, RouterModule, CommonModule]
 })
 export class AddItemComponent {
-  form = this.fb.group({ title: ['', Validators.required] });
+  form = this.fb.group({ 
+    title: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]] 
+  });
 
   constructor(
     private fb: FormBuilder,
@@ -29,11 +31,20 @@ export class AddItemComponent {
 
   async submit() {
     if (this.form.valid) {
-      const title = this.form.value.title!;
+      const title = this.form.value.title!.trim();
+      
+      // Validate title is not empty after trimming
+      if (!title) {
+        const errorMsg = this.languageService.translate('addItem.error');
+        const toast = await this.toastCtrl.create({ message: errorMsg, duration: 2000, color: 'danger' });
+        await toast.present();
+        return;
+      }
+
       const item: Item = { id: crypto.randomUUID(), title, status: ItemStatus.Pending };
       this.itemService.addItem(item);
       const msg = this.languageService.translate('home.itemAdded');
-      const toast = await this.toastCtrl.create({ message: msg, duration: 1500 });
+      const toast = await this.toastCtrl.create({ message: msg, duration: 1500, color: 'success' });
       await toast.present();
       this.goBack();
     }
