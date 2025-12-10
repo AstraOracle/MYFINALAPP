@@ -50,32 +50,81 @@ const translations: Translations = {
   }
 };
 
+/**
+ * Service for handling internationalization (i18n) and language switching.
+ * Supports English (en) and Spanish (es) with localStorage persistence.
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class LanguageService {
-  private currentLanguage = new BehaviorSubject<string>('en');
+  private readonly STORAGE_KEY = 'language';
+  private readonly DEFAULT_LANG = 'en';
+  private readonly SUPPORTED_LANGUAGES = ['en', 'es'];
+
+  private currentLanguage = new BehaviorSubject<string>(this.DEFAULT_LANG);
   public currentLanguage$ = this.currentLanguage.asObservable();
 
   constructor() {
-    const savedLang = localStorage.getItem('language') || 'en';
+    const savedLang = this.loadLanguageFromStorage();
     this.currentLanguage.next(savedLang);
   }
 
-  setLanguage(lang: string) {
-    this.currentLanguage.next(lang);
-    localStorage.setItem('language', lang);
+  /**
+   * Load language preference from localStorage with fallback to default.
+   */
+  private loadLanguageFromStorage(): string {
+    try {
+      const savedLang = localStorage.getItem(this.STORAGE_KEY);
+      return savedLang && this.SUPPORTED_LANGUAGES.includes(savedLang) ? savedLang : this.DEFAULT_LANG;
+    } catch (error) {
+      console.warn('Failed to load language from storage:', error);
+      return this.DEFAULT_LANG;
+    }
   }
 
+  /**
+   * Set the current application language and persist to storage.
+   * @param lang - Language code (e.g., 'en', 'es')
+   */
+  setLanguage(lang: string) {
+    if (!this.SUPPORTED_LANGUAGES.includes(lang)) {
+      console.warn(`Unsupported language: ${lang}. Falling back to ${this.DEFAULT_LANG}`);
+      lang = this.DEFAULT_LANG;
+    }
+    
+    this.currentLanguage.next(lang);
+    try {
+      localStorage.setItem(this.STORAGE_KEY, lang);
+    } catch (error) {
+      console.error('Failed to save language to storage:', error);
+    }
+  }
+
+  /**
+   * Get the current active language code.
+   * @returns Current language code
+   */
   getCurrentLanguage(): string {
     return this.currentLanguage.value;
   }
 
+  /**
+   * Translate a key to the current language.
+   * Falls back to English if key not found, then returns the key itself.
+   * @param key - Translation key in dot notation (e.g., 'app.title')
+   * @returns Translated string
+   */
   translate(key: string): string {
     const lang = this.currentLanguage.value;
-    return translations[lang]?.[key] || translations['en']?.[key] || key;
+    return translations[lang]?.[key] || translations[this.DEFAULT_LANG]?.[key] || key;
   }
 
+  /**
+   * Get an observable stream of translated strings that updates on language change.
+   * @param key - Translation key
+   * @returns Observable of translated string
+   */
   getTranslation(key: string): Observable<string> {
     return new Observable(observer => {
       observer.next(this.translate(key));
