@@ -1,0 +1,11 @@
+{
+  "ADD_ITEM": "Agregar elemento",
+  "TITLE": "Título",
+  "DELETE": "Eliminar",
+  "SETTINGS": "Configuración",
+  "LANGUAGE": "Idioma",
+  "ITEM_ADDED": "Elemento agregado",
+  "ITEM_DELETED": "Elemento eliminado",
+  "COMPLETED": "Completado",
+  "TOTAL_ITEMS": "Total de elementos"
+}

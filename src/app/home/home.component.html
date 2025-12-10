@@ -1,0 +1,37 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>{{ translate('app.title') }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="navigateToSettings()" color="light">
+        <ion-icon slot="start" name="settings"></ion-icon>
+        {{ translate('home.settings') }}
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div *ngIf="(items$ | async)?.length === 0" class="empty-state">
+    <ion-icon name="document-outline" class="empty-icon"></ion-icon>
+    <h2>{{ translate('home.noItems') }}</h2>
+    <p>{{ translate('home.addFirst') }}</p>
+  </div>
+
+  <ion-list *ngIf="(items$ | async)?.length! > 0">
+    <ion-item-sliding *ngFor="let item of items$ | async">
+      <ion-item>
+        <ion-label [class.completed]="isCompleted(item)">{{ item.title }}</ion-label>
+        <ion-checkbox slot="start" [checked]="isCompleted(item)" (ionChange)="toggle(item)"></ion-checkbox>
+      </ion-item>
+      <ion-item-options side="end">
+        <ion-item-option color="danger" (click)="delete(item)">Delete</ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="navigateToAddItem()" color="success">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

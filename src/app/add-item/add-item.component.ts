@@ -1,0 +1,49 @@
+import { Component } from '@angular/core';
+import { ItemService, Item, ItemStatus } from '../services/item.service';
+import { LanguageService } from '../services/language.service';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { ToastController } from '@ionic/angular';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { IonHeader, IonLabel, IonToolbar, IonTitle, IonContent, IonItem, IonInput, IonButton, IonButtons, IonBackButton, IonIcon } from "@ionic/angular/standalone";
+
+@Component({
+  selector: 'app-add-item',
+  templateUrl: './add-item.component.html',
+  styleUrls: ['./add-item.component.scss'],
+  standalone: true,
+  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonItem, IonLabel, IonInput, IonButton, IonButtons, IonBackButton, IonIcon, FormsModule, ReactiveFormsModule, RouterModule, CommonModule]
+})
+export class AddItemComponent {
+  form = this.fb.group({ title: ['', Validators.required] });
+
+  constructor(
+    private fb: FormBuilder,
+    private itemService: ItemService,
+    private languageService: LanguageService,
+    private router: Router,
+    private toastCtrl: ToastController
+  ) {}
+
+  async submit() {
+    if (this.form.valid) {
+      const title = this.form.value.title!;
+      const item: Item = { id: crypto.randomUUID(), title, status: ItemStatus.Pending };
+      this.itemService.addItem(item);
+      const msg = this.languageService.translate('home.itemAdded');
+      const toast = await this.toastCtrl.create({ message: msg, duration: 1500 });
+      await toast.present();
+      this.goBack();
+    }
+  }
+
+  goBack() {
+    this.router.navigate(['/']);
+  }
+
+  translate(key: string): string {
+    return this.languageService.translate(key);
+  }
+}

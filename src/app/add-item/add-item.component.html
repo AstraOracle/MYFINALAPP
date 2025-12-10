@@ -1,0 +1,43 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button (click)="goBack()" color="light"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ translate('add.title') }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="form-wrapper">
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="form-card">
+        <h2 class="form-title">{{ translate('add.title') }}</h2>
+        <p class="form-subtitle">{{ translate('add.label') }}</p>
+
+        <ion-item class="form-input">
+          <ion-input 
+            formControlName="title" 
+            placeholder="What needs to be done?"
+            clearInput>
+          </ion-input>
+        </ion-item>
+
+        <ion-button 
+          expand="block" 
+          type="submit" 
+          [disabled]="form.invalid"
+          color="success"
+          size="large"
+          class="submit-button">
+          <ion-icon slot="start" name="checkmark-done"></ion-icon>
+          {{ translate('add.button') }}
+        </ion-button>
+
+        <div *ngIf="form.get('title')?.invalid && form.get('title')?.touched" class="error-message">
+          <ion-icon name="alert-circle"></ion-icon>
+          {{ translate('add.error') }}
+        </div>
+      </div>
+    </form>
+  </div>
+</ion-content>

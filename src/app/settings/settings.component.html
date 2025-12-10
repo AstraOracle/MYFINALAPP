@@ -1,0 +1,44 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button (click)="goBack()" color="light"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ translate('settings.title') }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="settings-wrapper">
+    <ion-card class="settings-card">
+      <ion-card-header>
+        <ion-icon name="globe" class="settings-icon"></ion-icon>
+        <ion-card-title>{{ translate('settings.language') }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item>
+          <ion-label>{{ translate('settings.selectLanguage') }}</ion-label>
+          <ion-select 
+            interface="popover" 
+            [value]="selectedLang"
+            (ionChange)="changeLanguage($event.detail.value)"
+            class="language-select">
+            <ion-select-option value="en">English</ion-select-option>
+            <ion-select-option value="es">Español (Spanish)</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <p class="language-note">{{ translate('settings.currentLanguage') }}: <strong>{{ selectedLang === 'en' ? 'English' : 'Español' }}</strong></p>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card class="settings-card">
+      <ion-card-header>
+        <ion-icon name="information-circle" class="settings-icon"></ion-icon>
+        <ion-card-title>{{ translate('settings.about') }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>{{ translate('settings.version') }}</p>
+        <p class="app-description">{{ translate('settings.description') }}</p>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>
