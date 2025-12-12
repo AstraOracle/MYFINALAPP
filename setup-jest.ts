@@ -1,5 +1,16 @@
-import 'jest-preset-angular/setup-jest';
-import '@testing-library/jest-dom';
+import 'zone.js';
+import 'zone.js/testing';
+import { getTestBed } from '@angular/core/testing';
+import {
+  BrowserDynamicTestingModule,
+  platformBrowserDynamicTesting
+} from '@angular/platform-browser-dynamic/testing';
+
+// Initialize Angular testing environment
+getTestBed().initTestEnvironment(
+  BrowserDynamicTestingModule,
+  platformBrowserDynamicTesting(),
+);
 
 // Mock global objects
 Object.defineProperty(window, 'CSS', {value: null});
@@ -32,9 +43,11 @@ const localStorageMock = {
   removeItem: jest.fn(),
   clear: jest.fn(),
 };
-global.localStorage = localStorageMock as any;
+Object.defineProperty(window, 'localStorage', { value: localStorageMock });
 
-// Mock Ionicons
-jest.mock('ionicons', () => ({
-  addIcons: jest.fn(),
-}));
+// Mock crypto.randomUUID
+Object.defineProperty(globalThis, 'crypto', {
+  value: {
+    randomUUID: () => Math.random().toString(36).substring(7)
+  }
+});

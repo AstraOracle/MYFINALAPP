@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { provideRouter } from '@angular/router';
 import { LanguageService } from '../services/language.service';
+import { of } from 'rxjs';
 
 describe('SettingsComponent', () => {
   let fixture: any;
@@ -15,11 +16,11 @@ describe('SettingsComponent', () => {
 
   beforeEach(async () => {
     languageServiceSpy = {
-      getCurrentLanguage: jasmine.createSpy('getCurrentLanguage').and.returnValue('en'),
-      setLanguage: jasmine.createSpy('setLanguage'),
+      getCurrentLanguage: jest.fn().mockReturnValue('en'),
+      setLanguage: jest.fn(),
       translate: (key: string) => key
     };
-    routerSpy = { navigate: jasmine.createSpy('navigate') };
+    routerSpy = { navigate: jest.fn(), events: of({}) };
     
     await TestBed.configureTestingModule({
       imports: [IonicModule.forRoot(), SettingsComponent],

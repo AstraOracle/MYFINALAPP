@@ -15,14 +15,13 @@ describe('HomeComponent', () => {
   let routerSpy: any;
 
   beforeEach(async () => {
-    routerSpy = { navigate: jasmine.createSpy('navigate') };
+    routerSpy = { navigate: jest.fn() };
     const languageServiceStub = {
       translate: (key: string) => key === 'app.title' ? 'MyTodoList' : key,
       currentLanguage$: { subscribe: () => ({}) }
     };
-    const toastCtrlSpy = jasmine.createSpyObj('ToastController', ['create']);
-    toastCtrlSpy.create.and.returnValue(Promise.resolve({ present: () => Promise.resolve() }));
-    const loadingCtrlSpy = jasmine.createSpyObj('LoadingController', ['create']);
+    const toastCtrlSpy = { create: jest.fn().mockResolvedValue({ present: jest.fn().mockResolvedValue(undefined) }) };
+    const loadingCtrlSpy = { create: jest.fn() };
 
     await TestBed.configureTestingModule({
       imports: [IonicModule.forRoot(), HomeComponent],
@@ -79,15 +78,15 @@ describe('HomeComponent', () => {
     service.addItem({ id: 't1', title: 'ToggleMe', status: ItemStatus.Pending });
     fixture.detectChanges();
 
-    spyOn(service, 'toggleItem').and.callThrough();
-    spyOn(service, 'deleteItem').and.callThrough();
+    const toggleSpy = jest.spyOn(service, 'toggleItem');
+    const deleteSpy = jest.spyOn(service, 'deleteItem');
 
     const item = service.getItems()[0];
     component.toggle(item);
-    expect(service.toggleItem).toHaveBeenCalledWith(item.id);
+    expect(toggleSpy).toHaveBeenCalledWith(item.id);
 
     component.delete(item);
-    expect(service.deleteItem).toHaveBeenCalledWith(item.id);
+    expect(deleteSpy).toHaveBeenCalledWith(item.id);
   });
 
   it('isCompleted helper should return correct boolean', () => {

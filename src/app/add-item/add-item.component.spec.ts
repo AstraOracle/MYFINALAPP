@@ -7,6 +7,7 @@ import { ToastController, IonicModule } from '@ionic/angular';
 import { Location } from '@angular/common';
 import { provideRouter } from '@angular/router';
 import { LanguageService } from '../services/language.service';
+import { of } from 'rxjs';
 
 describe('AddItemComponent', () => {
   let fixture: any;
@@ -16,9 +17,8 @@ describe('AddItemComponent', () => {
   let toastCtrlSpy: any;
 
   beforeEach(async () => {
-    routerSpy = { navigate: jasmine.createSpy('navigate') };
-    toastCtrlSpy = jasmine.createSpyObj('ToastController', ['create']);
-    toastCtrlSpy.create.and.returnValue(Promise.resolve({ present: () => Promise.resolve() }));
+    routerSpy = { navigate: jest.fn(), events: of({}) };
+    toastCtrlSpy = { create: jest.fn().mockResolvedValue({ present: jest.fn().mockResolvedValue(undefined) }) };
     const languageServiceStub = {
       translate: (key: string) => key,
       currentLanguage$: { subscribe: () => ({}) }
