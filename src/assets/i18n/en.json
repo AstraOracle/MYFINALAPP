@@ -1,11 +1,28 @@
 {
-  "ADD_ITEM": "Add Item",
-  "TITLE": "Title",
-  "DELETE": "Delete",
-  "SETTINGS": "Settings",
-  "LANGUAGE": "Language",
-  "ITEM_ADDED": "Item added",
-  "ITEM_DELETED": "Item deleted",
-  "COMPLETED": "Completed",
-  "TOTAL_ITEMS": "Total Items"
+  "app": {
+    "title": "MyTodoList"
+  },
+  "home": {
+    "settings": "Settings",
+    "noItems": "No Items Yet",
+    "addFirst": "Tap the + button to add your first item",
+    "itemAdded": "Item added",
+    "itemUpdated": "Item status updated",
+    "itemDeleted": "Item deleted"
+  },
+  "add": {
+    "title": "Add Item",
+    "label": "Task Title",
+    "button": "Add Item",
+    "error": "Please enter a task title"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language Preferences",
+    "selectLanguage": "Select Language",
+    "currentLanguage": "Current language",
+    "about": "About",
+    "version": "MyFinalApp v1.0",
+    "description": "A simple and elegant task management application built with Ionic and Angular."
+  }
 }

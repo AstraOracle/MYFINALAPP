@@ -1,0 +1,28 @@
+{
+  "app": {
+    "title": "MeineAufgabenliste"
+  },
+  "home": {
+    "settings": "Einstellungen",
+    "noItems": "Noch keine Elemente",
+    "addFirst": "Tippen Sie auf die Schaltfläche +, um Ihr erstes Element hinzuzufügen",
+    "itemAdded": "Element hinzugefügt",
+    "itemUpdated": "Elementstatus aktualisiert",
+    "itemDeleted": "Element gelöscht"
+  },
+  "add": {
+    "title": "Element hinzufügen",
+    "label": "Aufgabentitel",
+    "button": "Element hinzufügen",
+    "error": "Bitte geben Sie einen Aufgabentitel ein"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "language": "Spracheinstellungen",
+    "selectLanguage": "Sprache auswählen",
+    "currentLanguage": "Aktuelle Sprache",
+    "about": "Über",
+    "version": "MeineAufgabenliste v1.0",
+    "description": "Eine einfache und elegante Aufgabenverwaltungsanwendung, erstellt mit Ionic und Angular."
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "app": {
+    "title": "MaListeDeTâches"
+  },
+  "home": {
+    "settings": "Paramètres",
+    "noItems": "Aucun élément pour l'instant",
+    "addFirst": "Appuyez sur le bouton + pour ajouter votre premier élément",
+    "itemAdded": "Élément ajouté",
+    "itemUpdated": "Statut de l'élément mis à jour",
+    "itemDeleted": "Élément supprimé"
+  },
+  "add": {
+    "title": "Ajouter un élément",
+    "label": "Titre de la tâche",
+    "button": "Ajouter un élément",
+    "error": "Veuillez saisir un titre de tâche"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "language": "Préférences de langue",
+    "selectLanguage": "Sélectionner la langue",
+    "currentLanguage": "Langue actuelle",
+    "about": "À propos",
+    "version": "MaListeDeTâches v1.0",
+    "description": "Une application simple et élégante de gestion des tâches créée avec Ionic et Angular."
+  }
+}

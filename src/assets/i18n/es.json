@@ -1,11 +1,28 @@
 {
-  "ADD_ITEM": "Agregar elemento",
-  "TITLE": "Título",
-  "DELETE": "Eliminar",
-  "SETTINGS": "Configuración",
-  "LANGUAGE": "Idioma",
-  "ITEM_ADDED": "Elemento agregado",
-  "ITEM_DELETED": "Elemento eliminado",
-  "COMPLETED": "Completado",
-  "TOTAL_ITEMS": "Total de elementos"
+  "app": {
+    "title": "MiListaTareas"
+  },
+  "home": {
+    "settings": "Configuración",
+    "noItems": "Sin elementos aún",
+    "addFirst": "Toca el botón + para agregar tu primer elemento",
+    "itemAdded": "Elemento añadido",
+    "itemUpdated": "Estado del elemento actualizado",
+    "itemDeleted": "Elemento eliminado"
+  },
+  "add": {
+    "title": "Agregar elemento",
+    "label": "Título de la tarea",
+    "button": "Agregar elemento",
+    "error": "Por favor, ingresa un título de tarea"
+  },
+  "settings": {
+    "title": "Configuración",
+    "language": "Preferencias de idioma",
+    "selectLanguage": "Selecciona idioma",
+    "currentLanguage": "Idioma actual",
+    "about": "Acerca de",
+    "version": "MiListaTareas v1.0",
+    "description": "Una aplicación simple y elegante de gestión de tareas construida con Ionic y Angular."
+  }
 }
