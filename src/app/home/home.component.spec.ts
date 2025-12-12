@@ -1,10 +1,12 @@
-/// <reference types="jasmine" />
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HomeComponent } from './home.component';
 import { ItemService, ItemStatus, Item } from '../services/item.service';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ToastController, LoadingController } from '@ionic/angular';
 import { By } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { Location } from '@angular/common';
+import { provideRouter } from '@angular/router';
+import { LanguageService } from '../services/language.service';
 
 describe('HomeComponent', () => {
   let fixture: ComponentFixture<HomeComponent>;
@@ -14,10 +16,24 @@ describe('HomeComponent', () => {
 
   beforeEach(async () => {
     routerSpy = { navigate: jasmine.createSpy('navigate') };
+    const languageServiceStub = {
+      translate: (key: string) => key === 'app.title' ? 'MyTodoList' : key,
+      currentLanguage$: { subscribe: () => ({}) }
+    };
+    const toastCtrlSpy = jasmine.createSpyObj('ToastController', ['create']);
+    toastCtrlSpy.create.and.returnValue(Promise.resolve({ present: () => Promise.resolve() }));
+    const loadingCtrlSpy = jasmine.createSpyObj('LoadingController', ['create']);
 
     await TestBed.configureTestingModule({
       imports: [IonicModule.forRoot(), HomeComponent],
-      providers: [ItemService, { provide: Router, useValue: routerSpy }]
+      providers: [
+        provideRouter([]),
+        ItemService,
+        { provide: Router, useValue: routerSpy },
+        { provide: LanguageService, useValue: languageServiceStub },
+        { provide: ToastController, useValue: toastCtrlSpy },
+        { provide: LoadingController, useValue: loadingCtrlSpy }
+      ]
     }).compileComponents();
 
     service = TestBed.inject(ItemService);
@@ -33,7 +49,7 @@ describe('HomeComponent', () => {
     fixture.detectChanges();
     const toolbar = fixture.nativeElement.querySelector('ion-toolbar');
     expect(toolbar).toBeTruthy();
-    expect(toolbar.textContent).toContain('MyFinalApp');
+    expect(toolbar.textContent).toContain('MyTodoList');
   });
 
   it('navigateToSettings should navigate to /settings', () => {
