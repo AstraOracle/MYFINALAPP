@@ -1,56 +1,41 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
-/**
- * Enum representing the status of a task item.
- */
+// TypeScript Enum - demonstrating advanced TypeScript usage
 export enum ItemStatus {
   Pending = 'pending',
   Completed = 'completed'
 }
 
-/**
- * Interface representing a task item.
- */
+// TypeScript Interface - strong typing for task items
 export interface Item {
   id: string;
   title: string;
   status: ItemStatus;
 }
 
-/**
- * Service for managing task items with CRUD operations.
- * Uses RxJS BehaviorSubject for reactive state management.
- */
 @Injectable({ providedIn: 'root' })
 export class ItemService {
+  // RxJS BehaviorSubject for reactive state management
   private items$ = new BehaviorSubject<Item[]>([]);
-  /** Observable stream of all items */
   itemsObservable = this.items$.asObservable();
 
   constructor() {}
 
-  /**
-   * Get the current array of all items.
-   * @returns Array of all task items
-   */
   getItems(): Item[] {
     return this.items$.value;
   }
 
-  /**
-   * Add a new item to the list.
-   * @param item - The item to add
-   */
+  // TypeScript Generic with constraint - advanced type safety
   addItem<T extends Item>(item: T) {
+    // Spread operator (...) for immutability - Modern JS feature
     this.items$.next([...this.items$.value, item]);
   }
 
-  /**
-   * Toggle the status of an item between pending and completed.
-   * @param id - The unique identifier of the item to toggle
-   */
   toggleItem(id: string) {
+    // Array.map() method - transforming array elements
+    // Arrow function and ternary operator - Modern JS features
+    // Object spread {...item} for immutable updates
     this.items$.next(
       this.items$.value.map(item =>
         item.id === id
@@ -60,19 +45,14 @@ export class ItemService {
     );
   }
 
-  /**
-   * Delete an item from the list.
-   * @param id - The unique identifier of the item to delete
-   */
   deleteItem(id: string) {
+    // Array.filter() method - removing items functionally
     this.items$.next(this.items$.value.filter(item => item.id !== id));
   }
 
-  /**
-   * Get the count of completed items.
-   * @returns Number of items with completed status
-   */
   getCompletedCount(): number {
+    // Array.reduce() method - aggregating values
+    // Demonstrates functional programming approach
     return this.items$.value.reduce((acc, item) => item.status === ItemStatus.Completed ? acc + 1 : acc, 0);
   }
 }

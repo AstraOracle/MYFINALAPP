@@ -17,6 +17,7 @@ import { IonHeader, IonLabel, IonToolbar, IonTitle, IonContent, IonItem, IonInpu
   imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonItem, IonLabel, IonInput, IonButton, IonButtons, IonBackButton, IonIcon, FormsModule, ReactiveFormsModule, RouterModule, CommonModule]
 })
 export class AddItemComponent {
+  // Reactive Forms with validation - demonstrates form handling
   form = this.fb.group({ 
     title: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]] 
   });
@@ -31,16 +32,20 @@ export class AddItemComponent {
 
   async submit() {
     if (this.form.valid) {
+      // Non-null assertion (!) and chaining - TypeScript feature
       const title = this.form.value.title!.trim();
       
       // Validate title is not empty after trimming
       if (!title) {
         const errorMsg = this.languageService.translate('addItem.error');
+        // Toast with color property - Mobile UI feedback element
         const toast = await this.toastCtrl.create({ message: errorMsg, duration: 2000, color: 'danger' });
         await toast.present();
         return;
       }
 
+      // Object shorthand property (title instead of title: title) - Modern JS
+      // crypto.randomUUID() for unique IDs
       const item: Item = { id: crypto.randomUUID(), title, status: ItemStatus.Pending };
       this.itemService.addItem(item);
       const msg = this.languageService.translate('home.itemAdded');

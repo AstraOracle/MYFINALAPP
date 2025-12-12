@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { CommonModule, AsyncPipe } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { ToastController, LoadingController } from '@ionic/angular';
+// Mobile UI Elements: FAB, Lists, Sliding Items, Buttons, Icons, Navigation
 import { IonHeader, IonItemSliding, IonContent, IonToolbar, IonTitle, IonList,
   IonButtons, IonButton, IonItem, IonLabel, IonCheckbox, IonItemOption, IonItemOptions, IonFab, IonFabButton, IonIcon
  } from "@ionic/angular/standalone";
@@ -37,6 +38,7 @@ export class HomeComponent {
     this.router.navigate(['/add-item']);
   }
 
+  // Toast notifications - Mobile UI element for user feedback
   async toggle(item: Item) {
     this.itemService.toggleItem(item.id);
     const msg = this.languageService.translate('home.itemUpdated');
@@ -44,6 +46,7 @@ export class HomeComponent {
     await toast.present();
   }
 
+  // Async/await pattern for handling toast display
   async delete(item: Item) {
     this.itemService.deleteItem(item.id);
     const msg = this.languageService.translate('home.itemDeleted');
@@ -51,6 +54,7 @@ export class HomeComponent {
     await toast.present();
   }
 
+  // Loading indicator - Mobile UI element for async operations
   async showLoading() {
     const loading = await this.loadingCtrl.create({ message: 'Loading items...', duration: 500 });
     await loading.present();

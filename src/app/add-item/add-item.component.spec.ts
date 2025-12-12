@@ -1,4 +1,4 @@
-import { TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { TestBed, waitForAsync } from '@angular/core/testing';
 import { AddItemComponent } from './add-item.component';
 import { ItemService } from '../services/item.service';
 import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
@@ -45,14 +45,13 @@ describe('AddItemComponent', () => {
     expect(component.form.valid).toBe(false);
   });
 
-  it('should submit valid form, add item, show toast and navigate', fakeAsync(async () => {
+  it('should submit valid form, add item, show toast and navigate', waitForAsync(async () => {
     component.form.controls['title'].setValue('New item');
     expect(component.form.valid).toBe(true);
     await component.submit();
-    tick();
     expect(itemService.getItems().some((i: any) => i.title === 'New item')).toBe(true);
-    expect(toastCtrlSpy.create.calls.any()).toBe(true);
-    expect(routerSpy.navigate.calls.any()).toBe(true);
+    expect(toastCtrlSpy.create).toHaveBeenCalled();
+    expect(routerSpy.navigate).toHaveBeenCalled();
   }));
 
   it('should add item when submit is called synchronously', () => {
