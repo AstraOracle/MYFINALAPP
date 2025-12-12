@@ -1,10 +1,12 @@
-/// <reference types="jasmine" />
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { AddItemComponent } from './add-item.component';
 import { ItemService } from '../services/item.service';
 import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastController, IonicModule } from '@ionic/angular';
+import { Location } from '@angular/common';
+import { provideRouter } from '@angular/router';
+import { LanguageService } from '../services/language.service';
 
 describe('AddItemComponent', () => {
   let fixture: any;
@@ -17,10 +19,20 @@ describe('AddItemComponent', () => {
     routerSpy = { navigate: jasmine.createSpy('navigate') };
     toastCtrlSpy = jasmine.createSpyObj('ToastController', ['create']);
     toastCtrlSpy.create.and.returnValue(Promise.resolve({ present: () => Promise.resolve() }));
+    const languageServiceStub = {
+      translate: (key: string) => key,
+      currentLanguage$: { subscribe: () => ({}) }
+    };
 
     await TestBed.configureTestingModule({
       imports: [IonicModule.forRoot(), ReactiveFormsModule, AddItemComponent],
-      providers: [ItemService, { provide: Router, useValue: routerSpy }, { provide: ToastController, useValue: toastCtrlSpy }]
+      providers: [
+        provideRouter([]),
+        ItemService,
+        { provide: Router, useValue: routerSpy },
+        { provide: ToastController, useValue: toastCtrlSpy },
+        { provide: LanguageService, useValue: languageServiceStub }
+      ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(AddItemComponent);

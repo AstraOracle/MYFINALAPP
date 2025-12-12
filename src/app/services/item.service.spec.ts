@@ -1,4 +1,3 @@
-/// <reference types="jasmine" />
 import { TestBed } from '@angular/core/testing';
 import { ItemService, ItemStatus, Item } from './item.service';
 
@@ -33,9 +32,9 @@ describe('ItemService', () => {
   it('should delete an item', () => {
     const id = 'del-1';
     service.addItem({ id, title: 'ToDelete', status: ItemStatus.Pending });
-    expect(service.getItems().some(i => i.id === id)).toBeTrue();
+    expect(service.getItems().some(i => i.id === id)).toBeTruthy();
     service.deleteItem(id);
-    expect(service.getItems().some(i => i.id === id)).toBeFalse();
+    expect(service.getItems().some(i => i.id === id)).toBeFalsy();
   });
 
   it('should count completed items', () => {
