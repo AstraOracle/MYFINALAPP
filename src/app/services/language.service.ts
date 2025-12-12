@@ -1,73 +1,36 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable, firstValueFrom } from 'rxjs';
 
-interface Translations {
-  [key: string]: {
-    [key: string]: string;
-  };
+interface TranslationData {
+  [key: string]: any;
 }
-
-const translations: Translations = {
-  en: {
-    'app.title': 'MyTodoList',
-    'home.settings': 'Settings',
-    'home.noItems': 'No Items Yet',
-    'home.addFirst': 'Tap the + button to add your first item',
-    'home.itemAdded': 'Item added',
-    'home.itemUpdated': 'Item status updated',
-    'home.itemDeleted': 'Item deleted',
-    'add.title': 'Add Item',
-    'add.label': 'Task Title',
-    'add.button': 'Add Item',
-    'add.error': 'Please enter a task title',
-    'settings.title': 'Settings',
-    'settings.language': 'Language Preferences',
-    'settings.selectLanguage': 'Select Language',
-    'settings.currentLanguage': 'Current language',
-    'settings.about': 'About',
-    'settings.version': 'MyFinalApp v1.0',
-    'settings.description': 'A simple and elegant task management application built with Ionic and Angular.'
-  },
-  es: {
-    'app.title': 'MiListaTareas',
-    'home.settings': 'Configuración',
-    'home.noItems': 'Sin elementos aún',
-    'home.addFirst': 'Toca el botón + para agregar tu primer elemento',
-    'home.itemAdded': 'Elemento añadido',
-    'home.itemUpdated': 'Estado del elemento actualizado',
-    'home.itemDeleted': 'Elemento eliminado',
-    'add.title': 'Agregar elemento',
-    'add.label': 'Título de la tarea',
-    'add.button': 'Agregar elemento',
-    'add.error': 'Por favor, ingresa un título de tarea',
-    'settings.title': 'Configuración',
-    'settings.language': 'Preferencias de idioma',
-    'settings.selectLanguage': 'Selecciona idioma',
-    'settings.currentLanguage': 'Idioma actual',
-    'settings.about': 'Acerca de',
-    'settings.version': 'MiListaTareas v1.0',
-    'settings.description': 'Una aplicación simple y elegante de gestión de tareas construida con Ionic y Angular.'
-  }
-};
 
 /**
  * Service for handling internationalization (i18n) and language switching.
- * Supports English (en) and Spanish (es) with localStorage persistence.
+ * Loads translations from JSON files and supports multiple languages with localStorage persistence.
+ * Supports: English (en), Spanish (es), French (fr), German (de)
  */
 @Injectable({
   providedIn: 'root'
 })
 export class LanguageService {
+  private readonly http = inject(HttpClient);
   private readonly STORAGE_KEY = 'language';
   private readonly DEFAULT_LANG = 'en';
-  private readonly SUPPORTED_LANGUAGES = ['en', 'es'];
+  private readonly SUPPORTED_LANGUAGES = ['en', 'es', 'fr', 'de'];
 
   private currentLanguage = new BehaviorSubject<string>(this.DEFAULT_LANG);
   public currentLanguage$ = this.currentLanguage.asObservable();
+  
+  private translations: { [lang: string]: TranslationData } = {};
+  private loadedLanguages = new Set<string>();
 
   constructor() {
     const savedLang = this.loadLanguageFromStorage();
-    this.currentLanguage.next(savedLang);
+    this.loadLanguage(savedLang).then(() => {
+      this.currentLanguage.next(savedLang);
+    });
   }
 
   /**
@@ -84,16 +47,42 @@ export class LanguageService {
   }
 
   /**
-   * Set the current application language and persist to storage.
-   * @param lang - Language code (e.g., 'en', 'es')
+   * Load translation file from assets folder.
+   * @param lang - Language code to load
    */
-  setLanguage(lang: string) {
+  private async loadLanguage(lang: string): Promise<void> {
+    if (this.loadedLanguages.has(lang)) {
+      return;
+    }
+
+    try {
+      const translations = await firstValueFrom(
+        this.http.get<TranslationData>(`/assets/i18n/${lang}.json`)
+      );
+      this.translations[lang] = translations;
+      this.loadedLanguages.add(lang);
+    } catch (error) {
+      console.error(`Failed to load language ${lang}:`, error);
+      // Load default language as fallback
+      if (lang !== this.DEFAULT_LANG && !this.loadedLanguages.has(this.DEFAULT_LANG)) {
+        await this.loadLanguage(this.DEFAULT_LANG);
+      }
+    }
+  }
+
+  /**
+   * Set the current application language and persist to storage.
+   * @param lang - Language code (e.g., 'en', 'es', 'fr', 'de')
+   */
+  async setLanguage(lang: string): Promise<void> {
     if (!this.SUPPORTED_LANGUAGES.includes(lang)) {
       console.warn(`Unsupported language: ${lang}. Falling back to ${this.DEFAULT_LANG}`);
       lang = this.DEFAULT_LANG;
     }
     
+    await this.loadLanguage(lang);
     this.currentLanguage.next(lang);
+    
     try {
       localStorage.setItem(this.STORAGE_KEY, lang);
     } catch (error) {
@@ -110,6 +99,14 @@ export class LanguageService {
   }
 
   /**
+   * Get list of supported languages.
+   * @returns Array of supported language codes
+   */
+  getSupportedLanguages(): string[] {
+    return [...this.SUPPORTED_LANGUAGES];
+  }
+
+  /**
    * Translate a key to the current language.
    * Falls back to English if key not found, then returns the key itself.
    * @param key - Translation key in dot notation (e.g., 'app.title')
@@ -117,7 +114,29 @@ export class LanguageService {
    */
   translate(key: string): string {
     const lang = this.currentLanguage.value;
-    return translations[lang]?.[key] || translations[this.DEFAULT_LANG]?.[key] || key;
+    const value = this.getNestedValue(this.translations[lang], key);
+    
+    if (value) return value;
+    
+    // Fallback to default language
+    if (lang !== this.DEFAULT_LANG) {
+      const defaultValue = this.getNestedValue(this.translations[this.DEFAULT_LANG], key);
+      if (defaultValue) return defaultValue;
+    }
+    
+    // Return key if no translation found
+    return key;
+  }
+
+  /**
+   * Get nested value from object using dot notation.
+   * @param obj - Object to search in
+   * @param path - Dot notation path (e.g., 'app.title')
+   * @returns Value at path or undefined
+   */
+  private getNestedValue(obj: any, path: string): string | undefined {
+    if (!obj) return undefined;
+    return path.split('.').reduce((current, key) => current?.[key], obj);
   }
 
   /**

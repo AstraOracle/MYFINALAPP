@@ -53,6 +53,13 @@ export class SettingsComponent implements OnInit {
   private languageService = inject(LanguageService);
   
   selectedLang = 'en';
+  
+  private languageNames: { [key: string]: string } = {
+    'en': 'English',
+    'es': 'Español',
+    'fr': 'Français',
+    'de': 'Deutsch'
+  };
 
   ngOnInit() {
     this.selectedLang = this.languageService.getCurrentLanguage();
@@ -62,6 +69,10 @@ export class SettingsComponent implements OnInit {
     this.selectedLang = lang;
     this.languageService.setLanguage(lang);
     console.log('Language changed to:', lang);
+  }
+  
+  getLanguageName(code: string): string {
+    return this.languageNames[code] || code;
   }
 
   translate(key: string): string {
